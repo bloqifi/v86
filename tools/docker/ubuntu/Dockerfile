@@ -11,6 +11,7 @@ RUN apt update && \
 		initramfs-tools \
 		net-tools \
 		iputils-ping \
+		iproute2 \
 		libboost-system1.58.0 \
 		libboost-filesystem1.58.0 \
 		libboost-program-options1.58.0 \
@@ -18,16 +19,18 @@ RUN apt update && \
 		libboost-chrono1.58.0 \
 		libssl1.0.0 \
 		libevent-pthreads-2.0-5 \
-		libevent-2.0-5 \
-	&& \
-    chsh -s /bin/bash && \
+		libevent-2.0-5
+
+RUN chsh -s /bin/bash && \
     echo "root:random" | chpasswd && \
     mkdir -p /etc/systemd/system/serial-getty@ttyS0.service.d/ && \
-    systemctl enable serial-getty@ttyS0.service && \
     rm /lib/systemd/system/getty.target.wants/getty-static.service && \
     rm /etc/issue && \
 	chmod -x /etc/update-motd.d/* && \
 	touch /root/.hushlogin && \
+	echo "tmpfs /tmp tmpfs nodev,nosuid 0 0" >> /etc/fstab
+
+RUN systemctl enable serial-getty@ttyS0.service && \
 	systemctl disable apt-daily-upgrade.timer && \
 	systemctl mask apt-daily-upgrade.service && \
 	systemctl disable apt-daily.timer && \
@@ -43,13 +46,14 @@ RUN apt update && \
 	systemctl disable remote-fs.target && \
 	systemctl mask remote-fs.target && \
 	systemctl disable motd-news.timer && \
-	systemctl mask motd-news.timer && \
-    echo "tmpfs /tmp tmpfs nodev,nosuid 0 0" >> /etc/fstab
+	systemctl mask motd-news.timer
 
 COPY getty-autologin-serial.conf /etc/systemd/system/serial-getty@ttyS0.service.d/
 COPY logind.conf /etc/systemd/
 COPY boot-9p /etc/initramfs-tools/scripts/
 COPY grub /etc/default/
+
+COPY networking.sh /root/
 
 # this needs to be commented out in order to boot from hdd
 RUN printf '%s\n' 9p 9pnet 9pnet_virtio virtio virtio_ring virtio_pci | tee -a /etc/initramfs-tools/modules && \

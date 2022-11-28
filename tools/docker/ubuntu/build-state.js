@@ -67,6 +67,13 @@ emulator.add_listener("serial0-output-char", function(c)
         console.error("\nBooted in %d", (Date.now() - boot_start) / 1000);
         booted = true;
 
+		// set pre network
+		emulator.serial0_send('echo "nameserver 8.8.4.4" > /etc/resolv.conf\n');
+		emulator.serial0_send('echo "nameserver 8.8.8.8" >> /etc/resolv.conf\n');
+
+		// remove network
+		emulator.serial0_send('rmmod ne2k-pci\n');
+
         // sync and drop caches: Makes it safer to change the filesystem as fewer files are rendered
         emulator.serial0_send("sync;echo 3 >/proc/sys/vm/drop_caches\n");
 
