@@ -164,7 +164,7 @@ function V86Starter(options)
                 let v86_bin = DEBUG ? "v86-debug.wasm" : "v86.wasm";
                 let v86_bin_fallback = "v86-fallback.wasm";
 
-				// provide uint8Array which can be compressed
+				// provide int8Array which can be compressed
 				// and decompressed with brotli
 				if (options['wasm_buffer']) {
 
