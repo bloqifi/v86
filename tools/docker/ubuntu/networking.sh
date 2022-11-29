@@ -2,6 +2,8 @@
 
 bloqcoin-cli stop
 
+sleep 2
+
 rmmod ne2k-pci
 modprobe ne2k-pci
 sleep 1

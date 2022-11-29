@@ -58,6 +58,11 @@ NetworkAdapter.prototype.handle_open = function(e)
     this.send_queue = [];
 };
 
+NetworkAdapter.prototype.handle_ping = function(e)
+{
+    this.pong();
+};
+
 NetworkAdapter.prototype.handle_error = function(e)
 {
     //console.log("onerror", e);
@@ -102,6 +107,7 @@ NetworkAdapter.prototype.connect = function()
     this.socket.binaryType = "arraybuffer";
 
     this.socket.onopen = this.handle_open.bind(this);
+	this.socket.onping = this.handle_ping.bind(this);
     this.socket.onmessage = this.handle_message.bind(this);
     this.socket.onclose = this.handle_close.bind(this);
     this.socket.onerror = this.handle_error.bind(this);
