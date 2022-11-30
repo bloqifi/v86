@@ -174,7 +174,7 @@ function CPU(bus, wm, next_tick_immediately)
 
     this.set_tsc(0, 0);
 
-    this.debug_init();
+    //this.debug_init();
 
     if(DEBUG)
     {

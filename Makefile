@@ -23,7 +23,7 @@ default: build/v86-debug.wasm
 all: build/v86_all.js build/libv86.js build/v86.wasm
 all-debug: build/libv86-debug.js build/v86-debug.wasm
 browser: build/v86_all.js
-simple: build/libv86.js
+min: build/libv86.min.js
 
 # Used for nodejs builds and in order to profile code.
 # `debug` gives identifiers a readable name, make sure it doesn't have any side effects.
@@ -140,6 +140,38 @@ build/libv86.js: $(CLOSURE) src/*.js lib/*.js src/browser/*.js
 		--js $(BROWSER_FILES)\
 		--js $(LIB_FILES)
 	ls -lh build/libv86.js
+
+# for min
+CORE_FILES_MIN=const.js config.js io.js main.js lib.js buffer.js ide.js pci.js floppy.js \
+	   memory.js dma.js pit.js vga.js ps2.js pic.js rtc.js uart.js hpet.js \
+	   acpi.js apic.js ioapic.js \
+	   state.js ne2k.js sb16.js virtio.js bus.js log.js \
+	   cpu.js \
+	   elf.js kernel.js
+LIB_FILES_MIN=9p.js filesystem.js jor1k.js marshall.js utf8.js
+BROWSER_FILES_MIN=screen.js keyboard.js mouse.js speaker.js serial.js \
+	      network.js starter.js worker_bus.js dummy_screen.js \
+	      filestorage.js
+
+CORE_FILES_MIN:=$(addprefix src/,$(CORE_FILES_MIN))
+LIB_FILES_MIN:=$(addprefix lib/,$(LIB_FILES_MIN))
+BROWSER_FILES_MIN:=$(addprefix src/browser/,$(BROWSER_FILES_MIN))
+
+build/libv86.min.js: $(CLOSURE) src/*.js lib/*.js src/browser/*.js
+	mkdir -p build
+	-ls -lh build/libv86.js
+	java -jar $(CLOSURE) \
+		--js_output_file build/libv86.min.js\
+		--define=DEBUG=false\
+		$(CLOSURE_FLAGS)\
+		--compilation_level SIMPLE\
+		--jscomp_off=missingProperties\
+		--jscomp_off=undefinedVars\
+		--output_wrapper ';(function(){%output%}).call(this);'\
+		--js $(CORE_FILES_MIN)\
+		--js $(BROWSER_FILES_MIN)\
+		--js $(LIB_FILES_MIN)
+	ls -lh build/libv86.min.js
 
 build/libv86-debug.js: $(CLOSURE) src/*.js lib/*.js src/browser/*.js
 	mkdir -p build
