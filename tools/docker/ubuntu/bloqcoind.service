@@ -1,0 +1,15 @@
+[Unit]
+Description=Bloqcoin daemon service
+After=network.target
+
+[Service]
+Type=forking
+User=root
+Group=root
+Restart=always
+RestartSec=10
+ExecStart=/usr/local/bin/bloqcoind
+ExecStop=/usr/local/bin/bloqcoin-cli stop
+
+[Install]
+WantedBy=multi-user.target

@@ -23,6 +23,7 @@ default: build/v86-debug.wasm
 all: build/v86_all.js build/libv86.js build/v86.wasm
 all-debug: build/libv86-debug.js build/v86-debug.wasm
 browser: build/v86_all.js
+build: build/libv86.js
 min: build/libv86.min.js
 
 # Used for nodejs builds and in order to profile code.
@@ -135,6 +136,7 @@ build/libv86.js: $(CLOSURE) src/*.js lib/*.js src/browser/*.js
 		$(CLOSURE_FLAGS)\
 		--compilation_level SIMPLE\
 		--jscomp_off=missingProperties\
+		--jscomp_off=undefinedVars\
 		--output_wrapper ';(function(){%output%}).call(this);'\
 		--js $(CORE_FILES)\
 		--js $(BROWSER_FILES)\
@@ -159,7 +161,7 @@ BROWSER_FILES_MIN:=$(addprefix src/browser/,$(BROWSER_FILES_MIN))
 
 build/libv86.min.js: $(CLOSURE) src/*.js lib/*.js src/browser/*.js
 	mkdir -p build
-	-ls -lh build/libv86.js
+	-ls -lh build/libv86.min.js
 	java -jar $(CLOSURE) \
 		--js_output_file build/libv86.min.js\
 		--define=DEBUG=false\

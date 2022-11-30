@@ -53,7 +53,12 @@ COPY logind.conf /etc/systemd/
 COPY boot-9p /etc/initramfs-tools/scripts/
 COPY grub /etc/default/
 
+# init network
 COPY networking.sh /root/
+
+# keep Bloqcoin alive
+COPY bloqcoind.service /etc/systemd/system/
+RUN systemctl enable bloqcoind.service
 
 # this needs to be commented out in order to boot from hdd
 RUN printf '%s\n' 9p 9pnet 9pnet_virtio virtio virtio_ring virtio_pci | tee -a /etc/initramfs-tools/modules && \

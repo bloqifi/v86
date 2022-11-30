@@ -1,9 +1,4 @@
 #!/bin/bash
-
-bloqcoin-cli stop
-
-sleep 2
-
 rmmod ne2k-pci
 modprobe ne2k-pci
 sleep 1
@@ -14,7 +9,3 @@ if [ $EXIST -eq 0 ]
 then
   route add default gw 10.5.0.1
 fi
-
-sleep 2
-
-bloqcoind

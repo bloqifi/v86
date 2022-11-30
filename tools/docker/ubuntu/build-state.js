@@ -62,10 +62,10 @@ emulator.add_listener("serial0-output-char", function(c)
 
     serial_text += c;
 
-    if(!booted && serial_text.endsWith("root@localhost:~# "))
-    {
-        console.error("\nBooted in %d", (Date.now() - boot_start) / 1000);
-        booted = true;
+	if (!booted && serial_text.endsWith("root@localhost:~# ")) {
+
+		console.error("\nBooted in %d", (Date.now() - boot_start) / 1000);
+		booted = true;
 
 		// set pre network
 		emulator.serial0_send('echo "nameserver 8.8.4.4" > /etc/resolv.conf\n');
@@ -74,8 +74,8 @@ emulator.add_listener("serial0-output-char", function(c)
 		// remove network
 		emulator.serial0_send('rmmod ne2k-pci\n');
 
-        // sync and drop caches: Makes it safer to change the filesystem as fewer files are rendered
-        emulator.serial0_send("sync;echo 3 >/proc/sys/vm/drop_caches\n");
+		// sync and drop caches: Makes it safer to change the filesystem as fewer files are rendered
+		emulator.serial0_send("sync;echo 3 >/proc/sys/vm/drop_caches\n");
 
         setTimeout(async function ()
 		{
@@ -87,7 +87,7 @@ emulator.add_listener("serial0-output-char", function(c)
 					console.error("Saved as " + OUTPUT_FILE);
 					stop();
 				});
-		}, 10 * 1000);
+		}, 10000);
     }
 });
 
