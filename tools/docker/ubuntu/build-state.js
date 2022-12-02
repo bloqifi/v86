@@ -87,7 +87,7 @@ emulator.add_listener("serial0-output-char", function(c)
 					console.error("Saved as " + OUTPUT_FILE);
 					stop();
 				});
-		}, 10000);
+		}, 15000);
     }
 });
 
