@@ -19,15 +19,9 @@ var emulator = new V86({
     bios: { url: path.join(V86_ROOT, "/bios/seabios.bin") },
     autostart: true,
 	disable_speaker: true,
-    memory_size: 512 * 1024 * 1024,
+    memory_size: 128 * 1024 * 1024,
     vga_memory_size: 0,
-    bzimage_initrd_from_filesystem: true,
 	cmdline: [
-		'rw',
-		'init=/bin/systemd',
-		'root=host9p',
-		'rootfstype=9p',
-		'rootflags=trans=virtio,cache=loose',
 		'console=ttyS0,115200',
 		'tsc=reliable',
 		'mitigations=off',
@@ -38,19 +32,16 @@ var emulator = new V86({
 		'selinux=0',
 		'audit=0',
 		'nowatchdog',
-		'mem=512M'
+		'mem=128M'
 	].join(' '),
-    filesystem: {
-        basefs: {
-            url: path.join(V86_ROOT, "/images/ubuntu-base-fs.json"),
-        },
-        baseurl: path.join(V86_ROOT, "/images/ubuntu-9p-rootfs-flat/"),
-    },
+	cdrom: {
+		url: './dist/v86-linux.iso'
+	},
     screen_dummy: true,
 	network_relay_url: "<UNUSED>"
 });
 
-console.log("Now booting, please stand by ...");
+console.log('Now booting, please stand by ...');
 
 var boot_start = Date.now();
 var serial_text = "";
@@ -62,13 +53,13 @@ emulator.add_listener("serial0-output-char", function(c)
 
     serial_text += c;
 
-	if (!booted && serial_text.endsWith("root@localhost:~# ")) {
+	if (!booted && serial_text.endsWith('~% ')) {
 
 		console.error("\nBooted in %d", (Date.now() - boot_start) / 1000);
 		booted = true;
 
 		// set pre network
-		emulator.serial0_send('\necho "nameserver 8.8.4.4" > /etc/resolv.conf\n');
+		emulator.serial0_send('echo "nameserver 8.8.4.4" > /etc/resolv.conf\n');
 		emulator.serial0_send('echo "nameserver 8.8.8.8" >> /etc/resolv.conf\n');
 
 		// remove network

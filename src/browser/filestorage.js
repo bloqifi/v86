@@ -102,11 +102,7 @@ ServerFileStorageWrapper.prototype.load_from_server = function(sha256sum)
     {
         v86util.load_file(this.baseurl + sha256sum, { done: async buffer =>
         {
-            let data = new Uint8Array(buffer);
-
-			// decompress data using brotli
-			data = globalThis.BrotliDecode(data);
-
+            const data = new Uint8Array(buffer);
             await this.cache(sha256sum, data);
             resolve(data);
         }});
